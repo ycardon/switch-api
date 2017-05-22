@@ -6,14 +6,17 @@
 
 const http = require('http')
 const url = require('url')
+const body = require('body')
 const exec = require('child_process').exec
- 
+
 http.createServer( (req, res)=> {
-    switch (url.parse(req.url).pathname){
+    switch (url.parse(req.url).pathname) {
         
         // switch the macbook display on or off
         case '/display':
-            req.body == 'ON' ? exec('caffeinate -u -t 1') : exec('pmset displaysleepnow')
+            if (req.method == 'POST') body(req, (_, body)=> {
+                body == 'ON' ? exec('caffeinate -u -t 1') : exec('pmset displaysleepnow')
+            })
             break
 
     }
