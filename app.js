@@ -1,24 +1,37 @@
-// Simple server that triggers system commands on predefined URLs
-// Used in conjunction with https://home-assistant.io/components/switch.rest/
-// To be demonized with http://pm2.keymetrics.io
-//
-// 2017.05.22 - Yann Cardon
+// Simple http server that triggers system commands on predefined URLs
+// 2017.05 - Yann Cardon
 
 const http = require('http')
 const url  = require('url')
 const body = require('body')
 const exec = require('child_process').exec
 
-http.createServer( (req, res)=> {
+http.createServer( (req, res)=>{
     switch (url.parse(req.url).pathname) {
         
-        // switch the macbook display on or off
+        // macbook display
         case '/display':
+
+            // switch on or off
             if (req.method == 'POST') body(req, (_, body)=> {
+                console.log('POST /display')
                 body == 'ON' ? exec('caffeinate -u -t 1') : exec('pmset displaysleepnow')
+                res.end()
             })
+
+            // current state
+            else {
+                console.log('GET /display')
+                exec('pmset -g powerstate IODisplayWrangler | tail -1 | cut -c29', (_, out, __)=> {
+                    res.write(out < 4 ? 'OFF' : 'ON')
+                    res.end()
+                })
+            }
             break
 
+        // all other routes
+        default:
+            res.write('call /display')
+            res.end()
     }
-    res.end()
 }).listen(8182)
