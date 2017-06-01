@@ -15,4 +15,8 @@ Control macbook display (on macOS Sierra)
 - GET /display : get current screen state (sleeping or not)
 - POST /display body=ON|OFF : switch screeen state
 
+## useful commands
 
+- sleep display: `pmset displaysleepnow`
+- wake display: `caffeinate -u -t 1`
+- test state : `pmset -g powerstate IODisplayWrangler | tail -1 | cut -c29` result <4 are sleeping
