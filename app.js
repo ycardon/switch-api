@@ -14,16 +14,16 @@ http.createServer( (req, res)=>{
 
             // switch on or off
             if (req.method == 'POST') body(req, (_, body)=>{
-                console.log('POST /display ' + body)
+                console.log(new Date() + ' - POST /display ' + body)
                 body == 'ON' ? exec('caffeinate -u -t 1') : exec('pmset displaysleepnow')
                 res.end()
             })
 
             // get current state
             else {
-                console.log('GET /display')
+                console.log(new Date() + ' - GET /display')
                 exec('pmset -g powerstate IODisplayWrangler | tail -1 | cut -c29', (_, out, __)=>{
-                    res.write(out < 4 ? 'OFF' : 'ON')
+                    res.write(parseInt(out) < 4 ? 'OFF' : 'ON')
                     res.end()
                 })
             }
