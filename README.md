@@ -2,19 +2,55 @@
 
 Simple http server that triggers system commands on predefined URLs
 
-- used in conjunction with https://home-assistant.io/components/switch.rest/
-- http://pm2.keymetrics.io for automatic startup
+- used in conjunction with <https://home-assistant.io/components/switch.rest/>
+- <http://pm2.keymetrics.io> for automatic startup
 
 [![Known Vulnerabilities](https://snyk.io/test/github/ycardon/switch-api/badge.svg)](https://snyk.io/test/github/ycardon/switch-api)
 
-## usage
+## usage and integration inside home-assistant
 
-Control macbook display (on macOS Mojave)
-- GET /display : get current screen state (sleeping or not)
-- POST /display body=ON|OFF : switch screeen state
+### control macbook display (on macOS Mojave)
 
-Get battery power status (on macOS Mojave)
-- GET /power : battery power status
+- `GET /display` : get current screen state (sleeping or not)
+- `POST /display body=ON|OFF` : switch screeen state
+
+```yaml
+switch:
+  - platform: rest
+    name: Macbook Display
+    resource: 'http://mymac:8182/display'
+```
+
+### get battery power status (on macOS Mojave)
+
+- `GET /power`
+
+```yaml
+sensor:
+  - platform: rest
+    name: Macbook battery
+    resource: 'http://mymac:8182/power'
+    json_attributes:
+      - isOnBattery
+      - isCharged
+      - chargingStatus
+      - chargePercent
+      - remainingChargeTime
+      - message
+    value_template: '{{ value_json.chargingStatus }}'
+```
+
+### get cpu average for last 5mn
+
+- `GET /cpu`
+
+```yaml
+sensor:
+  - platform: rest
+    name: Macbook CPU
+    resource: 'http://mymac:8182/cpu'
+    unit_of_measurement: '%'
+```
 
 ## useful commands
 

@@ -1,14 +1,30 @@
 // Simple http server that triggers system commands on predefined URLs
-// 2017.05 - Yann Cardon
+// Yann CARDON - https://github.com/ycardon/switch-api 
+// 2017.05 - display switch
+// 2018.11 - power and cpu sensor
 
 const http = require('http')
 const url  = require('url')
 const body = require('body')
 const exec = require('child_process').exec
+const os = require('os')
 
+// parse the output of the 'pmset -g batt' command
+function parsePowerStatus(out) {
+    return {
+        isOnBattery: (/'(.*) Power'/.exec(out)[1] == 'Battery') ? true : false,
+        isCharged: (/; (.*);/.exec(out)[1] == 'charged') ? true : false,
+        chargingStatus: /; (.*);/.exec(out)[1],
+        chargePercent: parseInt(/\t(.*)%/.exec(out)[1]),
+        remainingChargeTime: /;.*; ((.*) remaining|(\(no estimate\)))/.exec(out)[2] || null,
+        message: out
+    }
+}
+
+// start http server listening on 8182
 http.createServer( (req, res)=>{
     switch (url.parse(req.url).pathname) {
-        
+            
         // macbook display
         case '/display':
 
@@ -35,26 +51,25 @@ http.createServer( (req, res)=>{
                 console.log(new Date() + ' - GET /power')
                 exec('pmset -g batt', (_, out, __)=>{
                     res.setHeader('Content-Type', 'application/json');
-                    res.write(JSON.stringify({
-                        isOnBattery: (/'(.*) Power'/.exec(out)[1] == 'Battery') ? true : false,
-                        isCharged: (/; (.*);/.exec(out)[1] == 'charged') ? true : false,
-                        chargingStatus: /; (.*);/.exec(out)[1],
-                        chargePercent: parseInt(/\t(.*)%/.exec(out)[1]),
-                        remainingChargeTime: /;.*; ((.*) remaining|(\(no estimate\)))/.exec(out)[2] || null,
-                        message: out
-                    }))
+                    res.write(JSON.stringify(parsePowerStatus(out)))
                     res.end()
                 })
-            }
-            else {
+            } else {
                 res.statusCode = 405 // method not allowed
                 res.end()
             }
             break
 
+        // cpu
+        case '/cpu':
+            console.log(new Date() + ' - GET /cpu')
+            req.method == 'GET' ? res.write(os.loadavg()[1].toString()) : res.statusCode = 405
+            res.end()
+            break
+
         // all other routes
         default:
-            res.write('call /display or /power')
+            res.write('call /display /power or /cpu')
             res.end()
-        }
+    }
 }).listen(8182)
