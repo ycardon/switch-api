@@ -34,6 +34,7 @@ http.createServer( (req, res)=>{
             if (req.method == 'GET') {
                 console.log(new Date() + ' - GET /power')
                 exec('pmset -g batt', (_, out, __)=>{
+                    res.setHeader('Content-Type', 'application/json');
                     res.write(JSON.stringify({
                         isOnBattery: (/'(.*) Power'/.exec(out)[1] == 'Battery') ? true : false,
                         isCharged: (/; (.*);/.exec(out)[1] == 'charged') ? true : false,
@@ -42,7 +43,6 @@ http.createServer( (req, res)=>{
                         remainingChargeTime: /;.*; ((.*) remaining|(\(no estimate\)))/.exec(out)[2] || null,
                         message: out
                     }))
-                    res.setHeader('Content-Type', 'application/json');
                     res.end()
                 })
             }
