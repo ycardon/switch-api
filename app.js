@@ -3,6 +3,8 @@
 // 2017.05 - display switch
 // 2018.11 - power and cpu sensor
 
+const SWITCH_API_PORT = 8182
+
 const http = require('http')
 const url  = require('url')
 const body = require('body')
@@ -22,6 +24,8 @@ function parsePowerStatus(out) {
 }
 
 // start http server listening on 8182
+console.log(new Date() + ' - switch-api server started on http://localhost:' + SWITCH_API_PORT)
+
 http.createServer( (req, res)=>{
     switch (url.parse(req.url).pathname) {
             
@@ -69,7 +73,11 @@ http.createServer( (req, res)=>{
 
         // all other routes
         default:
-            res.write('call /display /power or /cpu')
+            res.write(
+                '<a href="/display">/display</a><br>' +
+                '<a href="/power">/power</a><br>' + 
+                '<a href="/cpu">/cpu</a>'
+            )
             res.end()
     }
-}).listen(8182)
+}).listen(SWITCH_API_PORT)
