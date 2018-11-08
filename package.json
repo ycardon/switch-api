@@ -1,16 +1,24 @@
 {
   "name": "switch-api",
-  "version": "2.0.2",
-  "description": "",
-  "main": "app.js",
+  "version": "2.0.3",
+  "description": "Simple http server that triggers system commands on predefined URLs",
+  "keywords": [
+    "macbook",
+    "home-assistant"
+  ],
+  "homepage": "https://github.com/ycardon/switch-api",
+  "bin": {
+    "switch-api": "./app.js"
+  },
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Yann Cardon",
+  "author": "Yann Cardon <ycardon@gmail.com>",
+  "repository": "ycardon/switch-api",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^10.12.3",
     "body": "^5.1.0"
-  }
+  },
+  "preferGlobal": true
 }
