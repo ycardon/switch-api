@@ -37,7 +37,8 @@ sensor:
       - chargePercent
       - remainingChargeTime
       - message
-    value_template: '{{ value_json.chargingStatus }}'
+    value_template: '{{ value_json.chargePercent }}'
+    unit_of_measurement: '%'
 ```
 
 ### get cpu average for last 5mn
@@ -49,6 +50,7 @@ sensor:
   - platform: rest
     name: Macbook CPU
     resource: 'http://mymac:8182/cpu'
+    value_template: '{{ value | round(1) }}'
     unit_of_measurement: '%'
 ```
 
