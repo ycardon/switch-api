@@ -29,9 +29,32 @@ http.createServer( (req, res)=>{
             }
             break
 
+        // power status
+        case '/power':
+            if (req.method == 'GET') {
+                console.log(new Date() + ' - GET /power')
+                exec('pmset -g batt', (_, out, __)=>{
+                    res.write(JSON.stringify({
+                        isOnBattery: (/'(.*) Power'/.exec(out)[1] == 'Battery') ? true : false,
+                        isCharged: (/; (.*);/.exec(out)[1] == 'charged') ? true : false,
+                        chargingStatus: /; (.*);/.exec(out)[1],
+                        chargePercent: parseInt(/\t(.*)%/.exec(out)[1]),
+                        remainingChargeTime: /;.*; ((.*) remaining|(\(no estimate\)))/.exec(out)[2] || null,
+                        message: out
+                    }))
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end()
+                })
+            }
+            else {
+                res.statusCode = 405 // method not allowed
+                res.end()
+            }
+            break
+
         // all other routes
         default:
-            res.write('call /display')
+            res.write('call /display or /power')
             res.end()
-    }
+        }
 }).listen(8182)
