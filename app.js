@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Simple http server that triggers system commands on predefined URLs
 // Yann CARDON - https://github.com/ycardon/switch-api 
 // 2017.05 - display switch
