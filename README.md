@@ -9,7 +9,7 @@ Simple http server that triggers system commands on predefined URLs
 
 ## usage and integration inside home-assistant
 
-### control macbook display (on macOS Mojave)
+### control mac display (on macOS Mojave)
 
 - `GET /display` : get current screen state (sleeping or not)
 - `POST /display body=ON|OFF` : switch screeen state
@@ -31,6 +31,7 @@ sensor:
     name: Macbook battery
     resource: 'http://mymac:8182/power'
     json_attributes:
+      - isOnAC
       - isOnBattery
       - isCharged
       - chargingStatus
@@ -41,9 +42,12 @@ sensor:
     unit_of_measurement: '%'
 ```
 
-### get cpu average for last 5mn
+### get cpu average, defaults to last 5mn
 
 - `GET /cpu`
+  - `/cpu?avg=1` **last mn**
+  - `/cpu?avg=5` **last 5mn**
+  - `/cpu?avg=15` **last 15mn**
 
 ```yaml
 sensor:
@@ -52,6 +56,15 @@ sensor:
     resource: 'http://mymac:8182/cpu'
     value_template: '{{ value | round(1) }}'
     unit_of_measurement: '%'
+```
+
+## run in verbose mode
+
+`node app.js --verbose`
+```console
+Sat Dec 21 2019 09:01:49 GMT-0600 (Central Standard Time) - switch-api server started on http://localhost:8182
+Sat Dec 21 2019 09:02:03 GMT-0600 (Central Standard Time) - GET /cpu
+Sat Dec 21 2019 09:02:17 GMT-0600 (Central Standard Time) - GET /display
 ```
 
 ## useful commands

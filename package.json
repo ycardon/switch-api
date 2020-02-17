@@ -4,6 +4,7 @@
   "description": "Simple http server that triggers system commands on predefined URLs",
   "keywords": [
     "macbook",
+    "imac",
     "home-assistant"
   ],
   "homepage": "https://github.com/ycardon/switch-api",
