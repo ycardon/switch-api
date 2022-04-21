@@ -1,7 +1,8 @@
 # switch-api
 
 Simple http server that triggers system commands on predefined URLs
-
+- written in Node.js with minimum dependencies
+- support Apple intel platform only, for Apple ARM64 please check the [switch-api-rs](https://github.com/ycardon/switch-api-rs) project 
 - used in conjunction with <https://home-assistant.io/components/switch.rest/>
 - <http://pm2.keymetrics.io> for automatic startup
 
